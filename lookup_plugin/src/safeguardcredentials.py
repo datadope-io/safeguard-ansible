@@ -1,0 +1,109 @@
+﻿# (c) 2023, Brad Nicholes <brad.nicholes@oneidentity.com>
+# (c) 2023, One Identity LLC.
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
+DOCUMENTATION = """
+    name: safeguardcredentials
+    version_added: "0.9"
+    author:
+      - Brad Nicholes (!UNKNOWN) <brad.nicholes@oneidentity.com>
+    short_description: retrieve credentials from Safeguard for Privileged Passwords vault
+    description:
+      - Retrieve credentials from the Safeguard for Privileged Passwords vault given a user certificate and API key that
+        corresponds to a specific credential.
+    options:
+      _terms:
+        description:
+          - List of API keys that correspond to retrievable credentials
+        required: True
+      a2aconnection:
+        description:
+          - Safeguard for Privileged Passwords appliance connection information
+          - The a2aconnection must contain the following properties
+            - spp_appliance - IP address or host name of the Safeguard for Prvileged Passwords appliance
+            - spp_certificate_file - Full path to the A2A client authentication certificate
+            - spp_certificate_key - Full path to the A2A client authentication private key
+        required: True
+    notes:
+      - Please see the configuration for the Safeguard for Privileged Passwords Application to Application registration.
+      - Each credential that is retrieved from Safeguard for Privileged Passwords will have an identifying API key.
+      - The safeguardcredentials lookup plugin requires OneIdentity PySafeguard module.  Please see https://github.com/OneIdentity/PySafeguard
+"""
+
+EXAMPLES = """
+  vars:
+    spp_credential_apikey: safyBECB8SW5g0Udk7GRFh6LaQ/KoI0eNOW4JK8Cqeo=
+    a2aconnection:
+      spp_appliance: 192.168.0.1
+      spp_certificate_file: /etc/ansible/certs/CN=a2ausercert.pem
+      spp_certificate_key: /etc/ansible/certs/CN=a2ausercert.key
+  name: retrieve a credential
+    ansible.builtin.set_fact:
+      password: "{{ lookup('safeguardcredentials', spp_credential_apikey, a2aconnection) }}"
+
+"""
+
+RETURN = """
+_raw:
+  description:
+    - a credential
+  type: list
+  elements: str
+"""
+
+from ansible.errors import AnsibleError, AnsibleAssertionError
+from ansible.module_utils._text import to_bytes, to_native, to_text
+from ansible.plugins.lookup import LookupBase
+
+import sys
+from os.path import dirname
+sys.path.append(dirname(__file__))
+
+from pysafeguard import *
+
+def _get_spp_credential(appliance, api_key, certificate_file, certificate_key):
+  """Retrieve the credential that corresponds to the API key
+    :arg appliance: SPP appliance to connection with
+    :arg api_key: Api key that coresponds to a credential
+    :arg cert: Client authentication certificate
+    :arg key: Client authentication key
+    :returns: a text string containing the credential
+  """
+  try:
+    password = PySafeguardConnection.a2a_get_credential(appliance, api_key, certificate_file, certificate_key, False)
+  except Exception as e:
+    raise AnsibleError('Failed to retrieve the credential: %s' % to_native(e))
+
+  return password
+
+
+class LookupModule(LookupBase):
+
+    def run(self, terms, variables, **kwargs):
+      ret = []
+
+      self.set_options(var_options=variables, direct=kwargs)
+
+      a2aconnection = self.get_option('a2aconnection')
+      #import epdb; epdb.serve()
+
+      appliance = a2aconnection['spp_appliance']
+      cert = a2aconnection['spp_certificate_file']
+      key = a2aconnection['spp_certificate_key']
+
+      if not appliance:
+        raise AnsibleError('Missing appliance IP address or host name.')
+      if not cert:
+        raise AnsibleError('Missing client authentication certificate path.')
+      if not key:
+        raise AnsibleError('Missing client authentication key path.')
+
+
+      for term in terms:
+        pw = _get_spp_credential(appliance, term, cert, key)
+        ret.append(pw)
+
+      return ret
+
