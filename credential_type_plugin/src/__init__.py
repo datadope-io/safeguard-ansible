@@ -10,13 +10,15 @@ def _get_spp_credential(**kwargs):
         :arg api_key: Api key that coresponds to a credential
         :arg cert: Client authentication certificate
         :arg key: Client authentication key
+        :arg tls_cert: tls certificate or False
         :returns: a text string containing the credential
     """
 
-    api_key = kwargs.get('spp_api_key')
-    appliance = kwargs.get('spp_appliance')
-    cert = kwargs.get('spp_certificate_path')
-    key = kwargs.get('spp_key_path')
+    api_key = kwargs.get('spp_api_key', None)
+    appliance = kwargs.get('spp_appliance', None)
+    cert = kwargs.get('spp_certificate_path', None)
+    key = kwargs.get('spp_key_path', None)
+    tls_cert = kwargs.get('spp_tls_path', False)
 
     if not api_key:
         raise ValueError('Missing credential API key.')
@@ -28,7 +30,7 @@ def _get_spp_credential(**kwargs):
         raise ValueError('Missing client authentication key path.')
 
     try:
-        return PySafeguardConnection.a2a_get_credential(appliance, api_key, cert, key, False)
+        return PySafeguardConnection.a2a_get_credential(appliance, api_key, cert, key, tls_cert)
     except Exception as e:
         print(e)
         raise ValueError('Failed to retrieve the credential.')
@@ -52,6 +54,10 @@ spp_plugin = CredentialPlugin(
         }, {
             'id': 'spp_key_path',
             'label': 'Safeguard client key file path',
+            'type': 'string',
+        }, {
+            'id': 'spp_tls_path',
+            'label': 'Safeguard TLS certificate file path',
             'type': 'string',
         }],
         'metadata': [],

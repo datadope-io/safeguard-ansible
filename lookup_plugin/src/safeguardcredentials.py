@@ -63,16 +63,17 @@ sys.path.append(dirname(__file__))
 
 from pysafeguard import *
 
-def _get_spp_credential(appliance, api_key, certificate_file, certificate_key):
+def _get_spp_credential(appliance, api_key, certificate_file, certificate_key, tls_cert):
   """Retrieve the credential that corresponds to the API key
     :arg appliance: SPP appliance to connection with
     :arg api_key: Api key that coresponds to a credential
-    :arg cert: Client authentication certificate
-    :arg key: Client authentication key
+    :arg certificate_file: Client authentication certificate
+    :arg certificate_key: Client authentication key
+    :arg tls_cert: tls certificate or False
     :returns: a text string containing the credential
   """
   try:
-    password = PySafeguardConnection.a2a_get_credential(appliance, api_key, certificate_file, certificate_key, False)
+    password = PySafeguardConnection.a2a_get_credential(appliance, api_key, certificate_file, certificate_key, tls_cert)
   except Exception as e:
     raise AnsibleError('Failed to retrieve the credential: %s' % to_native(e))
 
@@ -87,11 +88,11 @@ class LookupModule(LookupBase):
       self.set_options(var_options=variables, direct=kwargs)
 
       a2aconnection = self.get_option('a2aconnection')
-      #import epdb; epdb.serve()
 
-      appliance = a2aconnection['spp_appliance']
-      cert = a2aconnection['spp_certificate_file']
-      key = a2aconnection['spp_certificate_key']
+      appliance = a2aconnection.get('spp_appliance', None)
+      cert = a2aconnection.get('spp_certificate_file', None)
+      key = a2aconnection.get('spp_certificate_key', None)
+      tls_cert = a2aconnection.get('spp_tls_cert', False)
 
       if not appliance:
         raise AnsibleError('Missing appliance IP address or host name.')
@@ -102,7 +103,7 @@ class LookupModule(LookupBase):
 
 
       for term in terms:
-        pw = _get_spp_credential(appliance, term, cert, key)
+        pw = _get_spp_credential(appliance, term, cert, key, tls_cert)
         ret.append(pw)
 
       return ret
