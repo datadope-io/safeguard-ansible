@@ -1,0 +1,21 @@
+namespace: oneidentity
+name: safeguard
+version: 0.9.0
+readme: README.md
+authors:
+  - "Brad Nicholes <brad.nicholes@oneidentity.com>"
+description: Provides plugins to integrate Ansible with Safeguard for Privileged Passwords
+license:
+  - "GPL-3.0-or-later"
+tags:
+  - oneidentity
+  - Safeguard
+  - Credential
+  - Lookup
+dependencies: {}
+repository: "https://github.com/OneIdentity/safeguard-ansible"
+documentation: "https://github.com/OneIdentity/safeguard-ansible"
+homepage: "https://github.com/OneIdentity/safeguard-ansible"
+issues: "https://github.com/OneIdentity/safeguard-ansible/issues"
+build_ignore: []
+
