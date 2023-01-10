@@ -30,6 +30,15 @@ steps:
     python3 -m pip install --user ansible-core
   displayName: 'Install ansible-core'
 
+- task: PowerShell@2
+  displayName: Update the version in galaxy.yml
+  inputs:
+    targetType: 'inline'
+    script: |
+      $file = "collection/oneidentity/safeguard/galaxy.yml"
+      (Get-Content $file).replace('0.9.0', "$(version)") | Set-Content $file
+    failOnStderr: true
+
 - script: |
     cd collection/oneidentity/safeguard
     ansible-galaxy collection build
@@ -54,19 +63,19 @@ steps:
     script: 'ls $(Build.ArtifactStagingDirectory)'
   displayName: 'List staging directory'
 
-- task: GitHubRelease@1
-  inputs:
-    gitHubConnection: 'github.ReleaseServiceAccount'
-    repositoryName: 'OneIdentity/Safeguard-ansible'
-    action: 'create'
-    target: '$(Build.SourceVersion)'
-    tagSource: 'userSpecifiedTag'
-    tag: 'release-$(version)'
-    title: '$(version)'
-    isPreRelease: $(isPrerelease)
-    changeLogCompareToRelease: 'lastFullRelease'
-    changeLogType: 'commitBased'
-    assets: |
-      $(Build.ArtifactStagingDirectory)/*.tar.gz
-  displayName: 'Creating and publishing a release to Github'
-  #condition: and(succeeded(), eq(variables.isReleaseBranch, true))
+#- task: GitHubRelease@1
+#  inputs:
+#    gitHubConnection: 'github.ReleaseServiceAccount'
+#    repositoryName: 'OneIdentity/Safeguard-ansible'
+#    action: 'create'
+#    target: '$(Build.SourceVersion)'
+#    tagSource: 'userSpecifiedTag'
+#    tag: 'release-$(version)'
+#    title: '$(version)'
+#    isPreRelease: $(isPrerelease)
+#    changeLogCompareToRelease: 'lastFullRelease'
+#    changeLogType: 'commitBased'
+#    assets: |
+#      $(Build.ArtifactStagingDirectory)/*.tar.gz
+#  displayName: 'Creating and publishing a release to Github'
+#  #condition: and(succeeded(), eq(variables.isReleaseBranch, true))
