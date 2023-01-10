@@ -28,6 +28,7 @@ steps:
 
 - script: |
     python3 -m pip install --user ansible-core
+    python3 -m pip install antsibull-changelog
   displayName: 'Install ansible-core'
 
 - task: PowerShell@2
