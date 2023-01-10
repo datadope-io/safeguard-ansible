@@ -6,6 +6,8 @@
 trigger:
   branches:
     include: [ main,  release-* ]
+  paths:
+    include: [collection]
 
 pool:
   vmImage: ubuntu-latest
@@ -42,6 +44,18 @@ steps:
     contents: '*.tar.gz'
     targetFolder: $(Build.ArtifactStagingDirectory)
   displayName: 'Copy files to staging folder'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'SafeguardCollection'
+  displayName: 'Publishing the artifacts'
+
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'ls $(Build.ArtifactStagingDirectory)'
+  displayName: 'List staging directory'
 
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
