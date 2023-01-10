@@ -1,0 +1,44 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    include: [ main,  release-* ]
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  version: '0.9.0.$(Build.BuildId)'
+  targetDir: 'target'
+  isPrerelease: ${{ true }}
+  isReleaseBranch: $[ or( eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release-') ) ]
+
+steps:
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'env | sort'
+  displayName: 'Display environment variables'
+
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: 3.9
+
+- script: |
+    python3 -m pip install --user ansible-core
+  displayName: 'Install ansible-core'
+
+- script: |
+    python3 -m pip install --user ansible-core
+  displayName: 'Install ansible-core'
+
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+- script: |
+    echo Add other tasks to build, test, and deploy your project.
+    echo See https://aka.ms/yaml
+  displayName: 'Run a multi-line script'
