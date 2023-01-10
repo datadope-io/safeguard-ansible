@@ -64,19 +64,19 @@ steps:
     script: 'ls $(Build.ArtifactStagingDirectory)'
   displayName: 'List staging directory'
 
-#- task: GitHubRelease@1
-#  inputs:
-#    gitHubConnection: 'github.ReleaseServiceAccount'
-#    repositoryName: 'OneIdentity/Safeguard-ansible'
-#    action: 'create'
-#    target: '$(Build.SourceVersion)'
-#    tagSource: 'userSpecifiedTag'
-#    tag: 'release-$(version)'
-#    title: '$(version)'
-#    isPreRelease: $(isPrerelease)
-#    changeLogCompareToRelease: 'lastFullRelease'
-#    changeLogType: 'commitBased'
-#    assets: |
-#      $(Build.ArtifactStagingDirectory)/*.tar.gz
-#  displayName: 'Creating and publishing a release to Github'
-#  #condition: and(succeeded(), eq(variables.isReleaseBranch, true))
+- task: GitHubRelease@1
+  inputs:
+    gitHubConnection: 'github.com.SafeguardPipelines'
+    repositoryName: 'OneIdentity/Safeguard-ansible'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'userSpecifiedTag'
+    tag: 'release-$(version)'
+    title: '$(version)'
+    isPreRelease: $(isPrerelease)
+    changeLogCompareToRelease: 'lastFullRelease'
+    changeLogType: 'commitBased'
+    assets: |
+      $(Build.ArtifactStagingDirectory)/*.tar.gz
+  displayName: 'Creating and publishing a release to Github'
+  #condition: and(succeeded(), eq(variables.isReleaseBranch, true))
