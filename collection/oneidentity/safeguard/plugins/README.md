@@ -4,7 +4,7 @@ The Safeguard resource for Ansible collection includes a lookup plugin that allo
 
 ## Safeguard Credentials lookup plugin
 
-The Safeguard Credentials lookup plugin allows Ansible to pull a credential from SPP through the Application to Application (A2A) API. This requires that an A2A registration has been created in SPP. For more information about how to create an A2A registration, please see the Safeguard for Privileged Passwords Administration Guide for your version of SPP (<https://support.oneidentity.com/technical-documents>).
+The Safeguard Credentials lookup plugin allows Ansible to fetch a credential from SPP through the Application to Application (A2A) API. This requires that an A2A registration has been created in SPP. For more information about how to create an A2A registration, please see the Safeguard for Privileged Passwords Administration Guide for your version of SPP (<https://support.oneidentity.com/technical-documents>).
 
 ### Installation
 
