@@ -32,8 +32,16 @@ steps:
   displayName: 'Install ansible-core'
 
 - script: |
-    python3 -m pip install --user ansible-core
-  displayName: 'Install ansible-core'
+    cd collection/oneidentity/safeguard
+    ansible-galaxy collection build
+  displayName: 'Build plugin collection'
+
+- task: CopyFiles@2
+  inputs:
+    sourceFolder: '$(Build.SourcesDirectory)/collection/oneidentity/safeguard'
+    contents: '*.tar.gz'
+    targetFolder: $(Build.ArtifactStagingDirectory)
+  displayName: 'Copy files to staging folder'
 
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
