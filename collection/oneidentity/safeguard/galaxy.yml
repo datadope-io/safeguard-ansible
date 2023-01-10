@@ -6,7 +6,7 @@ authors:
   - "Brad Nicholes <brad.nicholes@oneidentity.com>"
 description: Provides plugins to integrate Ansible with Safeguard for Privileged Passwords
 license:
-  - "GPL-3.0-or-later"
+  - "Apache-2.0"
 tags:
   - oneidentity
   - Safeguard
