@@ -48,7 +48,7 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    SourceFolder: '$(build.sourcesdirectory)'
+    SourceFolder: '$(workingDir)'
     Contents: 'dist/*'
     TargetFolder: '$(build.artifactstagingdirectory)'
   displayName: 'Copy dist to artifact staging directory'
