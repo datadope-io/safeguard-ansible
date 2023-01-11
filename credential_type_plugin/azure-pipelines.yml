@@ -1,0 +1,105 @@
+trigger:
+  branches:
+    include: [ main,  release-* ]
+  paths:
+    include: [credential_type_plugin]
+    exclude: [README.md]
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  version: '0.9.$(Build.BuildId)'
+  targetDir: 'target'
+  isPrerelease: ${{ true }}
+  isReleaseBranch: $[ or( eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release-') ) ]
+
+steps:
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'env | sort'
+  displayName: 'Display environment variables'
+
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: 3.9
+
+- script: |
+    python3 -m pip install --upgrade pip wheel
+    python3 -m pip install poetry
+    export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
+    poetry install
+  displayName: 'Install software'
+
+- script: |
+      poetry version $(build.SourceBranchName)
+  displayName: Update pyproject.toml to $(build.SourceBranchName)
+  condition: eq(variables.isReleaseBranch, true)
+
+- script: |
+    cd credential_type_plugin/
+    poetry build
+  displayName: Build PyPi dist
+
+      - task: CopyFiles@2
+        displayName: 'Copy dist to artifact staging directory'
+        inputs:
+          SourceFolder: '$(build.sourcesdirectory)'
+          Contents: |
+            dist/*
+          TargetFolder: '$(build.artifactstagingdirectory)'
+        condition: succeededOrFailed()
+
+      - task: PublishPipelineArtifact@0
+        displayName: 'Publish pipeline artifact'
+        inputs:
+          artifactName: 'package'
+          targetPath: '$(Build.ArtifactStagingDirectory)'
+        condition: succeededOrFailed()
+
+    # This stage will publish to PyPi if this build was
+    # triggered by someone publishing a release with a GitHub tag
+  #- stage: Release
+  #  dependsOn: Build
+  #  condition: and(succeeded(), eq(variables.isReleaseBranch, true))
+
+  #  jobs:
+  #  - job: Publish_to_PyPi
+  #    steps:
+  #    - download: 'current'
+  #      artifact: 'drop'
+  #      displayName: 'Download artifacts for release build due to tag'
+
+  #    - script: |
+  #        python -m pip install --upgrade pip
+  #        pip install twine
+  #      displayName: 'Install twine'
+
+  #    # Set pythonUploadServiceConnection: testPypiTania if you want to test a PyPi push
+  #    # but not actually push a project to PyPi OneIdentity. See Project Settings->Service Connections.
+  #    - task: TwineAuthenticate@1
+  #      displayName: Twine Authenticate
+  #      inputs:
+  #        pythonUploadServiceConnection: pypiOneIdentity
+
+  #    - script: |
+  #        twine upload --verbose --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/drop/dist/*
+  #      displayName: Upload release to PyPi OneIdentity
+
+#- task: GitHubRelease@1
+#  inputs:
+#    gitHubConnection: 'github.com.SafeguardPipelines'
+#    repositoryName: 'OneIdentity/Safeguard-ansible'
+#    action: 'create'
+#    target: '$(Build.SourceVersion)'
+#    tagSource: 'userSpecifiedTag'
+#    tag: 'release-$(version)'
+#    title: '$(version)'
+#    isPreRelease: $(isPrerelease)
+#    changeLogCompareToRelease: 'lastFullRelease'
+#    changeLogType: 'commitBased'
+#    assets: |
+#      $(Build.ArtifactStagingDirectory)/*.tar.gz
+#  displayName: 'Creating and publishing a release to Github'
+#  condition: and(succeeded(), eq(variables.isReleaseBranch, true))

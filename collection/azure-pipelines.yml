@@ -13,7 +13,7 @@ variables:
   version: '0.9.$(Build.BuildId)'
   targetDir: 'target'
   isPrerelease: ${{ true }}
-  isReleaseBranch: $[ or( eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release-') ) ]
+  isReleaseBranch: $[ or( eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release-') ) ]
 
 steps:
 - task: Bash@3
@@ -79,4 +79,4 @@ steps:
     assets: |
       $(Build.ArtifactStagingDirectory)/*.tar.gz
   displayName: 'Creating and publishing a release to Github'
-  #condition: and(succeeded(), eq(variables.isReleaseBranch, true))
+  condition: and(succeeded(), eq(variables.isReleaseBranch, true))

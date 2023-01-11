@@ -7,12 +7,12 @@ requirements = ['pysafeguard']  # add Python dependencies here
 
 setup(
     name='spp-custom-credential-plugin',
-    version='0.1',
+    version='0.9.0',
     author='One Identity, Llc.',
     author_email='brad.nicholes@oneidentity.com',
     description='',
     long_description='',
-    license='Gnu Public License 3.0',
+    license='Apache 2.0',
     keywords='ansible, One Identity',
     url='http://oneidentity.com',
     packages=['spp_custom_credential_plugin'],
