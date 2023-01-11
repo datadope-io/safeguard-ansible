@@ -109,4 +109,4 @@ steps:
     assets: |
       $(Build.ArtifactStagingDirectory)/dist/*
   displayName: 'Creating and publishing a release to Github'
-  #condition: and(succeeded(), eq(variables.isReleaseBranch, true))
+  condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
