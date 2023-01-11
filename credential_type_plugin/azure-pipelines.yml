@@ -12,7 +12,7 @@ pool:
 
 variables:
   version: '0.9.$(Build.BuildId)'
-  targetDir: 'target'
+  workingDir: '$(Build.SourcesDirectory)/credential_type_plugin'
   isPrerelease: ${{ true }}
   isReleaseBranch: $[ or( eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release-') ) ]
 
@@ -31,17 +31,19 @@ steps:
     python3 -m pip install --upgrade pip wheel
     python3 -m pip install poetry
     export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
-    cd credential_type_plugin/
     poetry install
+  workingDirectory: variables.workingDir
   displayName: 'Install build software'
 
 - script: |
-      poetry version $(build.SourceBranchName)
+    poetry version $(build.SourceBranchName)
+  workingDirectory: variables.workingDir
   displayName: Update pyproject.toml to $(build.SourceBranchName)
   condition: eq(variables.isReleaseBranch, true)
 
 - script: |
     poetry build
+  workingDirectory: variables.workingDir
   displayName: Build PyPi dist
 
 - task: CopyFiles@2
