@@ -35,11 +35,11 @@ steps:
   workingDirectory: '$(workingDir)'
   displayName: 'Install build software'
 
-- script: |
-    poetry version $(build.SourceBranchName)
-  workingDirectory: '$(workingDir)'
-  displayName: Update pyproject.toml to $(build.SourceBranchName)
-  condition: eq(variables.isReleaseBranch, true)
+#- script: |
+#    poetry version $(build.SourceBranchName)
+#  workingDirectory: '$(workingDir)'
+#  displayName: Update pyproject.toml to $(build.SourceBranchName)
+#  condition: eq(variables.isReleaseBranch, true)
 
 - script: |
     poetry build
