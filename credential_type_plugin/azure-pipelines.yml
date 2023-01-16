@@ -102,7 +102,7 @@ steps:
     target: '$(Build.SourceVersion)'
     tagSource: 'userSpecifiedTag'
     tag: 'release-$(version)'
-    title: '$(version)'
+    title: 'Safeguard Credential Type $(version)'
     isPreRelease: $(isPrerelease)
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
