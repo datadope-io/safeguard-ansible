@@ -32,6 +32,7 @@ steps:
     python3 -m pip install poetry
     export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
     poetry install
+    keyring --disable
   workingDirectory: '$(workingDir)'
   displayName: 'Install build software'
 
