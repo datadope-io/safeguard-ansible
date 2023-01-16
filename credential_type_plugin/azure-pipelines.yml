@@ -28,7 +28,7 @@ steps:
     versionSpec: 3.9
 
 - script: |
-    python3 -m pip install --upgrade pip wheel
+    python3 -m pip install --upgrade pip wheel twine
     python3 -m pip install poetry
     export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
     poetry install
@@ -65,34 +65,25 @@ steps:
     script: 'ls $(Build.ArtifactStagingDirectory)'
   displayName: 'List staging directory'
 
-    # This stage will publish to PyPi if this build was
-    # triggered by someone publishing a release with a GitHub tag
-- stage: Release
-  dependsOn: Build
+#- script: |
+#    python -m pip install --upgrade pip
+#    pip install twine
+#  displayName: 'Install twine'
+
+# Set pythonUploadServiceConnection: testPypiTania if you want to test a PyPi push
+# but not actually push a project to PyPi OneIdentity. See Project Settings->Service Connections.
+- task: TwineAuthenticate@1
+  displayName: Twine Authenticate
   condition: and(succeeded(), eq(variables.isReleaseBranch, true))
+  #condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
+  inputs:
+    pythonUploadServiceConnection: bnichpypiuploadservice
 
-  jobs:
-  - job: Publish_to_PyPi
-    steps:
-    #- download: 'current'
-    #  artifact: 'drop'
-    #  displayName: 'Download artifacts for release build due to tag'
-
-    - script: |
-        python -m pip install --upgrade pip
-        pip install twine
-      displayName: 'Install twine'
-
-    # Set pythonUploadServiceConnection: testPypiTania if you want to test a PyPi push
-    # but not actually push a project to PyPi OneIdentity. See Project Settings->Service Connections.
-    - task: TwineAuthenticate@1
-      displayName: Twine Authenticate
-      inputs:
-        pythonUploadServiceConnection: bnichpypiuploadservice
-
-    - script: |
-        twine upload --verbose --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/dist/*
-      displayName: Upload release to PyPi OneIdentity
+- script: |
+    twine upload --verbose --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/dist/*
+  displayName: Upload release to PyPi OneIdentity
+  condition: and(succeeded(), eq(variables.isReleaseBranch, true))
+  #condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
 
 - task: GitHubRelease@1
   inputs:
