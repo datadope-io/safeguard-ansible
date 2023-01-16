@@ -77,10 +77,10 @@ steps:
   condition: and(succeeded(), eq(variables.isReleaseBranch, true))
   #condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
   inputs:
-    pythonUploadServiceConnection: bnichpypiuploadservice
+    pythonUploadServiceConnection: bnichtestpypi
 
 - script: |
-    twine upload --verbose --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/dist/*
+    python3 -m twine upload --verbose --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/dist/*
   displayName: Upload release to PyPi OneIdentity
   condition: and(succeeded(), eq(variables.isReleaseBranch, true))
   #condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
