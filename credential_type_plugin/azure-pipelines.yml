@@ -86,7 +86,7 @@ steps:
   displayName: 'Display .pypirc config file'
 
 - script: |
-    python3 -m twine upload --verbose --repository testpypi --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/dist/*
+    python3 -m twine upload --verbose --repository-url https://test.pypi.org/legacy/ --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/dist/*
   displayName: Upload release to PyPi OneIdentity
   condition: and(succeeded(), eq(variables.isReleaseBranch, true))
   #condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
