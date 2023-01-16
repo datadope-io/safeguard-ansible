@@ -67,32 +67,32 @@ steps:
 
     # This stage will publish to PyPi if this build was
     # triggered by someone publishing a release with a GitHub tag
-  #- stage: Release
-  #  dependsOn: Build
-  #  condition: and(succeeded(), eq(variables.isReleaseBranch, true))
+  - stage: Release
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables.isReleaseBranch, true))
 
-  #  jobs:
-  #  - job: Publish_to_PyPi
-  #    steps:
-  #    - download: 'current'
-  #      artifact: 'drop'
-  #      displayName: 'Download artifacts for release build due to tag'
+    jobs:
+    - job: Publish_to_PyPi
+      steps:
+      #- download: 'current'
+      #  artifact: 'drop'
+      #  displayName: 'Download artifacts for release build due to tag'
 
-  #    - script: |
-  #        python -m pip install --upgrade pip
-  #        pip install twine
-  #      displayName: 'Install twine'
+      - script: |
+          python -m pip install --upgrade pip
+          pip install twine
+        displayName: 'Install twine'
 
-  #    # Set pythonUploadServiceConnection: testPypiTania if you want to test a PyPi push
-  #    # but not actually push a project to PyPi OneIdentity. See Project Settings->Service Connections.
-  #    - task: TwineAuthenticate@1
-  #      displayName: Twine Authenticate
-  #      inputs:
-  #        pythonUploadServiceConnection: pypiOneIdentity
+      # Set pythonUploadServiceConnection: testPypiTania if you want to test a PyPi push
+      # but not actually push a project to PyPi OneIdentity. See Project Settings->Service Connections.
+      - task: TwineAuthenticate@1
+        displayName: Twine Authenticate
+        inputs:
+          pythonUploadServiceConnection: bnichpypiuploadservice
 
-  #    - script: |
-  #        twine upload --verbose --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/drop/dist/*
-  #      displayName: Upload release to PyPi OneIdentity
+      - script: |
+          twine upload --verbose --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/dist/*
+        displayName: Upload release to PyPi OneIdentity
 
 - task: GitHubRelease@1
   inputs:
