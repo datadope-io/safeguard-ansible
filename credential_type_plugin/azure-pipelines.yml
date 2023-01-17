@@ -65,17 +65,11 @@ steps:
     script: 'ls $(Build.ArtifactStagingDirectory)'
   displayName: 'List staging directory'
 
-#- script: |
-#    python -m pip install --upgrade pip
-#    pip install twine
-#  displayName: 'Install twine'
-
 # Set pythonUploadServiceConnection: testPypiTania if you want to test a PyPi push
 # but not actually push a project to PyPi OneIdentity. See Project Settings->Service Connections.
 - task: TwineAuthenticate@1
   displayName: Twine Authenticate
-  condition: and(succeeded(), eq(variables.isReleaseBranch, true))
-  #condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
+  condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
   inputs:
     pythonUploadServiceConnection: bnichtestpypi
 
@@ -84,12 +78,12 @@ steps:
     targetType: 'inline'
     script: 'cat $(PYPIRC_PATH)'
   displayName: 'Display .pypirc config file'
+  condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
 
 - script: |
     python3 -m twine upload --verbose --repository SafeguardAnsible --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/dist/*
   displayName: Upload release to PyPi OneIdentity
-  condition: and(succeeded(), eq(variables.isReleaseBranch, true))
-  #condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
+  condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
 
 - task: GitHubRelease@1
   inputs:
