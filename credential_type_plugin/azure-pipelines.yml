@@ -49,6 +49,7 @@ steps:
 #  condition: eq(variables.isReleaseBranch, true)
 
 - script: |
+    rm ./pyproject.toml
     python3 -m build
   workingDirectory: '$(workingDir)'
   displayName: Build PyPi dist
