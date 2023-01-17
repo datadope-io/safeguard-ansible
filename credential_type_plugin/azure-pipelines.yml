@@ -29,22 +29,34 @@ steps:
 
 - script: |
     python3 -m pip install --upgrade pip wheel twine
-    python3 -m pip install poetry
+    python3 -m pip install build
     export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
-    poetry install
   workingDirectory: '$(workingDir)'
   displayName: 'Install build software'
 
-- script: |
-    poetry version $(version)
-  workingDirectory: '$(workingDir)'
-  displayName: Update pyproject.toml to $(version)
-  condition: eq(variables.isReleaseBranch, true)
+#- script: |
+#    python3 -m pip install --upgrade pip wheel twine
+#    python3 -m pip install poetry
+#    export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
+#    poetry install
+#  workingDirectory: '$(workingDir)'
+#  displayName: 'Install build software'
+
+#- script: |
+#    poetry version $(version)
+#  workingDirectory: '$(workingDir)'
+#  displayName: Update pyproject.toml to $(version)
+#  condition: eq(variables.isReleaseBranch, true)
 
 - script: |
-    poetry build
+    python3 -m build
   workingDirectory: '$(workingDir)'
   displayName: Build PyPi dist
+
+#- script: |
+#    poetry build
+#  workingDirectory: '$(workingDir)'
+#  displayName: Build PyPi dist
 
 - task: CopyFiles@2
   inputs:
