@@ -29,7 +29,7 @@ classifiers = [
 python = "^3.9"
 pysafeguard = "^1.0.2"
 
-[tool.poetry.awx.credential.plugins]
+[tool.entry_points."awx.credential.plugins"]
 spp_plugin = "safeguardcredentialtype:spp_plugin"
 
 [tool.poetry.extras]
