@@ -48,6 +48,16 @@ steps:
 #  displayName: Update pyproject.toml to $(version)
 #  condition: eq(variables.isReleaseBranch, true)
 
+- task: PowerShell@2
+  displayName: Update the version in setup.py
+  inputs:
+    targetType: 'inline'
+    script: |
+      $file = "setup.py"
+      (Get-Content $file).replace('0.9.0', "$(version)") | Set-Content $file
+    workingDirectory: '$(workingDir)'
+    failOnStderr: true
+
 - script: |
     rm ./pyproject.toml
     python3 -m build

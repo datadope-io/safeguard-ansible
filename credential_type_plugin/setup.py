@@ -22,7 +22,7 @@ setup(
     install_requires=requirements,
     entry_points = {
         'awx.credential_plugins': [
-            'spp_plugin = spp_custom_credential_plugin:spp_plugin',
+            'spp_plugin = safeguardcredentialtype:spp_plugin',
         ]
     }
 )
