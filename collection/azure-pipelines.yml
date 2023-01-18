@@ -13,6 +13,7 @@ pool:
 variables:
   version: '0.9.$(Build.BuildId)'
   targetDir: 'target'
+  workingDir: '$(Build.SourcesDirectory)/collection'
   isPrerelease: ${{ true }}
   isReleaseBranch: $[ or( eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release-') ) ]
 
@@ -82,4 +83,17 @@ steps:
   displayName: 'Creating and publishing a release to Github'
   condition: and(succeeded(), eq(variables.isReleaseBranch, true))
   #Replace the above condition with this one to turn off pre-releases being published
+  #condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
+
+- task: AzureKeyVault@1
+  inputs:
+    azureSubscription: 'OneIdentity.RD.SBox.Safeguard-ServiceConnection'
+    KeyVaultName: 'SafeguardBuildSecrets'
+    SecretsFilter: 'AnsibleGalaxyApiKey1'
+  displayName: 'Get Galaxy.Ansible.com API key from Sandbox Azure Key Vault'
+  #condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
+
+- script: |
+    ansible-galaxy collection publish $(Build.ArtifactStagingDirectory)/oneidentity-safeguard-$(version).tar.gz --token $(AnsibleGalaxyApiKey1)
+  displayName: 'Publish the collection to Ansible Galaxy'
   #condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
