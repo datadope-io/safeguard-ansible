@@ -6,4 +6,4 @@ The Safeguard collection provides plugins that can be used to integrate Safeguar
 
 ## Installation and usage
 
-For more information about installing and using the the Safeguard collection, please see <https://github.com/OneIdentity/safeguard-ansible/tree/main/collection/oneidentity/safeguard>
+For more information about installing and using the the Safeguard collection, please see <https://github.com/OneIdentity/safeguard-ansible/tree/main/collection/oneidentity/safeguard/plugins>
