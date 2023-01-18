@@ -60,6 +60,7 @@ steps:
 
 - script: |
     rm ./pyproject.toml
+    rm ./safeguardcredentialtype/safeguardcredentialtype.py
     python3 -m build
   workingDirectory: '$(workingDir)'
   displayName: Build PyPi dist
