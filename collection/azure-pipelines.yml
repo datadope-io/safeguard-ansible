@@ -80,4 +80,6 @@ steps:
     assets: |
       $(Build.ArtifactStagingDirectory)/*.tar.gz
   displayName: 'Creating and publishing a release to Github'
-  condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
+  condition: and(succeeded(), eq(variables.isReleaseBranch, true))
+  #Replace the above condition with this one to turn off pre-releases being published
+  #condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))

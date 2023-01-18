@@ -34,20 +34,6 @@ steps:
   workingDirectory: '$(workingDir)'
   displayName: 'Install build software'
 
-#- script: |
-#    python3 -m pip install --upgrade pip wheel twine
-#    python3 -m pip install poetry
-#    export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
-#    poetry install
-#  workingDirectory: '$(workingDir)'
-#  displayName: 'Install build software'
-
-#- script: |
-#    poetry version $(version)
-#  workingDirectory: '$(workingDir)'
-#  displayName: Update pyproject.toml to $(version)
-#  condition: eq(variables.isReleaseBranch, true)
-
 - task: PowerShell@2
   displayName: Update the version in setup.py
   inputs:
@@ -59,16 +45,9 @@ steps:
     failOnStderr: true
 
 - script: |
-    rm ./pyproject.toml
-    rm ./safeguardcredentialtype/safeguardcredentialtype.py
     python3 -m build
   workingDirectory: '$(workingDir)'
   displayName: Build PyPi dist
-
-#- script: |
-#    poetry build
-#  workingDirectory: '$(workingDir)'
-#  displayName: Build PyPi dist
 
 - task: CopyFiles@2
   inputs:
@@ -89,8 +68,7 @@ steps:
     script: 'ls $(Build.ArtifactStagingDirectory)'
   displayName: 'List staging directory'
 
-# Set pythonUploadServiceConnection: testPypiTania if you want to test a PyPi push
-# but not actually push a project to PyPi OneIdentity. See Project Settings->Service Connections.
+# Change the service connection to the OneIdentity connection when ready to publish to Pypi
 - task: TwineAuthenticate@1
   displayName: Twine Authenticate
   condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
@@ -124,4 +102,6 @@ steps:
     assets: |
       $(Build.ArtifactStagingDirectory)/dist/*
   displayName: 'Creating and publishing a release to Github'
-  condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
+  condition: and(succeeded(), eq(variables.isReleaseBranch, true))
+  #Replace the above condition with this one to turn off pre-releases being published
+  #condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
