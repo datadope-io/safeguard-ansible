@@ -9,8 +9,9 @@ license:
   - "Apache-2.0"
 tags:
   - oneidentity
-  - Credential
-  - Lookup
+  - safeguard
+  - credential
+  - lookup
 dependencies: {}
 repository: "https://github.com/OneIdentity/safeguard-ansible"
 documentation: "https://github.com/OneIdentity/safeguard-ansible"
