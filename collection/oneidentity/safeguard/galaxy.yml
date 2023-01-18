@@ -9,7 +9,6 @@ license:
   - "Apache-2.0"
 tags:
   - oneidentity
-  - Safeguard
   - Credential
   - Lookup
 dependencies: {}
