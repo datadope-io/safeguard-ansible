@@ -16,7 +16,7 @@ Installation of the Saferguard collection must be done using the Ansible-Galaxy 
 2. Install the Safeguard resource collection using the ansible-galaxy command line tool
 
 ```text
-> ansible-galaxy collection install oneidentity-safeguard-<version>.tar.gz -p <your-collection-location>
+> ansible-galaxy collection install oneidentity-safeguardcollection-<version>.tar.gz -p <your-collection-location>
 ```
 
 #### Installing from the Github repository
