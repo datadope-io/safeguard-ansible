@@ -94,6 +94,6 @@ steps:
   #condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
 
 - script: |
-    ansible-galaxy collection publish $(Build.ArtifactStagingDirectory)/bnicholesdell-safeguard-$(version).tar.gz --token $(AnsibleGalaxyApiKey1)
+    ansible-galaxy collection publish $(Build.ArtifactStagingDirectory)/bnicholesdell-safeguard-collection-$(version).tar.gz --token $(AnsibleGalaxyApiKey1)
   displayName: 'Publish the collection to Ansible Galaxy'
   #condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
