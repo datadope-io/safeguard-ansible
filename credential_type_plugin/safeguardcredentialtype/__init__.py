@@ -37,7 +37,7 @@ def _get_spp_credential(**kwargs):
 
 
 spp_plugin = CredentialPlugin(
-    'Safeguard Credential Plugin',
+    'Safeguard Credential',
     inputs={
         'fields': [{
             'id': 'spp_api_key',
