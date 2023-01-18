@@ -68,12 +68,12 @@ steps:
     script: 'ls $(Build.ArtifactStagingDirectory)'
   displayName: 'List staging directory'
 
-# Change the service connection to the OneIdentity connection when ready to publish to Pypi
+# Change the service connection to the pypiOneIdentity connection when ready to publish to Pypi
 - task: TwineAuthenticate@1
   displayName: Twine Authenticate
   condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
   inputs:
-    pythonUploadServiceConnection: bnichtestpypi
+    pythonUploadServiceConnection: pypiOneIdentity
 
 - task: Bash@3
   inputs:
