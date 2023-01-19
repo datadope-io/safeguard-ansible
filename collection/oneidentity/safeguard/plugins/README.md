@@ -58,7 +58,7 @@ vars:
       spp_certificate_file: /etc/ansible/spp/a2ausercert.pem
       spp_certificate_key: /etc/ansible/spp/a2ausercert.key
       spp_tls_cert: /etc/ansible/spp/spptlscert.pem
-  spp_credential: "{{lookup('oneidentity.safeguardcollection.safguardcredentials', spp_a2a_apikey, a2aconnection=a2aconnectioninfo)}}"
+  spp_credential: "{{lookup('oneidentity.safeguardcollection.safeguardcredentials', spp_a2a_apikey, a2aconnection=a2aconnectioninfo)}}"
 ```
 
 Parameters:
@@ -89,12 +89,12 @@ linuxservers:
       spp_credential_1: safyBECB8SW5g0Udk7GRFh6LaQ/KoI0eNOW4JK8Cqeo=
       ansible_host: 192.168.2.34
       ansible_user: serviceadmin1
-      ansible_password: "{{lookup('oneidentity.safeguardcollection.safguardcredentials', spp_credential_1, a2aconnection=a2aconnectioninfo)}}"
+      ansible_password: "{{lookup('oneidentity.safeguardcollection.safeguardcredentials', spp_credential_1, a2aconnection=a2aconnectioninfo)}}"
     vm02:
       spp_credential_2: ekmiCM/HcEOyIuBfOg2rLwtcH9qcykO9T+He0ySGbKY=
       ansible_host: 192.168.2.35
       ansible_user: serviceadmin2
-      ansible_password: "{{lookup('oneidentity.safeguardcollection.safguardcredentials', spp_credential_2, a2aconnection=a2aconnectioninfo)}}"
+      ansible_password: "{{lookup('oneidentity.safeguardcollection.safeguardcredentials', spp_credential_2, a2aconnection=a2aconnectioninfo)}}"
 ```
 
 Variables file:
@@ -106,7 +106,7 @@ a2aconnectioninfo:
     spp_certificate_file: /etc/ansible/spp/a2ausercert.pem
     spp_certificate_key: /etc/ansible/spp/a2ausercert.key
     spp_tls_cert: /etc/ansible/spp/spptlscert.pem
-spp_credential: "{{lookup('oneidentity.safeguardcollection.safguardcredentials', spp_credential_apikey, a2aconnection=a2aconnectioninfo)}}"
+spp_credential: "{{lookup('oneidentity.safeguardcollection.safeguardcredentials', spp_credential_apikey, a2aconnection=a2aconnectioninfo)}}"
 ```
 
 Playbook file:
@@ -124,5 +124,5 @@ Playbook file:
   tasks:
     - name: Get the SPP credential
       set_fact:
-        my_credential: "{{lookup('oneidentity.safeguardcollection.safguardcredentials', spp_credential_apikey, a2aconnection=a2aconnectioninfo)}}"
+        my_credential: "{{lookup('oneidentity.safeguardcollection.safeguardcredentials', spp_credential_apikey, a2aconnection=a2aconnectioninfo)}}"
 ```
