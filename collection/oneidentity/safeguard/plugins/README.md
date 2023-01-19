@@ -6,6 +6,16 @@ The Safeguard resource for Ansible collection includes a lookup plugin that allo
 
 The Safeguard Credentials lookup plugin allows Ansible to fetch a credential from SPP through the Application to Application (A2A) API. This requires that an A2A registration has been created in SPP. For more information about how to create an A2A registration, please see the Safeguard for Privileged Passwords Administration Guide for your version of SPP (<https://support.oneidentity.com/technical-documents>).
 
+### Prerequisites
+
+All of the Safeguard plugins have a dependency on One Identity PySafeguard python module. PySafeguard provides a native python client library for accessing the Safeguard for Privileged Passwords appliance. PySafeguard can be installed by running the following command:
+
+```text
+> python3 -m pip install pysafeguard
+```
+
+For more information about PySafeguard, please see <https://github.com/OneIdentity/PySafeguard>
+
 ### Installation
 
 Installation of the Saferguard collection must be done using the Ansible-Galaxy command line tool. There are several options for installing the Safeguard collection for Ansible.
@@ -48,7 +58,7 @@ vars:
       spp_certificate_file: /etc/ansible/spp/a2ausercert.pem
       spp_certificate_key: /etc/ansible/spp/a2ausercert.key
       spp_tls_cert: /etc/ansible/spp/spptlscert.pem
-  spp_credential: "{{lookup('oneidentity.safeguard.safguardcredentials', spp_a2a_apikey, a2aconnection=a2aconnectioninfo)}}"
+  spp_credential: "{{lookup('oneidentity.safeguardcollection.safguardcredentials', spp_a2a_apikey, a2aconnection=a2aconnectioninfo)}}"
 ```
 
 Parameters:
@@ -79,12 +89,12 @@ linuxservers:
       spp_credential_1: safyBECB8SW5g0Udk7GRFh6LaQ/KoI0eNOW4JK8Cqeo=
       ansible_host: 192.168.2.34
       ansible_user: serviceadmin1
-      ansible_password: "{{lookup('safeguardcredentials', spp_credential_1, a2aconnection=a2aconnectioninfo)}}"
+      ansible_password: "{{lookup('oneidentity.safeguardcollection.safguardcredentials', spp_credential_1, a2aconnection=a2aconnectioninfo)}}"
     vm02:
       spp_credential_2: ekmiCM/HcEOyIuBfOg2rLwtcH9qcykO9T+He0ySGbKY=
       ansible_host: 192.168.2.35
       ansible_user: serviceadmin2
-      ansible_password: "{{lookup('safeguardcredentials', spp_credential_2, a2aconnection=a2aconnectioninfo)}}"
+      ansible_password: "{{lookup('oneidentity.safeguardcollection.safguardcredentials', spp_credential_2, a2aconnection=a2aconnectioninfo)}}"
 ```
 
 Variables file:
@@ -96,7 +106,7 @@ a2aconnectioninfo:
     spp_certificate_file: /etc/ansible/spp/a2ausercert.pem
     spp_certificate_key: /etc/ansible/spp/a2ausercert.key
     spp_tls_cert: /etc/ansible/spp/spptlscert.pem
-spp_credential: "{{lookup('safeguardcredentials', spp_credential_apikey, a2aconnection=a2aconnectioninfo)}}"
+spp_credential: "{{lookup('oneidentity.safeguardcollection.safguardcredentials', spp_credential_apikey, a2aconnection=a2aconnectioninfo)}}"
 ```
 
 Playbook file:
@@ -114,5 +124,5 @@ Playbook file:
   tasks:
     - name: Get the SPP credential
       set_fact:
-        my_credential: "{{lookup('safeguardcredentials', spp_credential_apikey, a2aconnection=a2aconnectioninfo)}}"
+        my_credential: "{{lookup('oneidentity.safeguardcollection.safguardcredentials', spp_credential_apikey, a2aconnection=a2aconnectioninfo)}}"
 ```

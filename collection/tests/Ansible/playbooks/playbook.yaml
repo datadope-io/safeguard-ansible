@@ -1,0 +1,27 @@
+﻿- name: SPP Test Playbook
+  hosts: all
+  vars:
+    spp_credential_apikey: <a2a-apikey>
+    a2aconnection:
+      spp_appliance: <spp-host-address>
+      spp_certificate_file: <a2a-cert-path>
+      spp_certificate_key: <a2a-key-path>
+      spp_tls_cert: <tls-cert-path>
+    spp_credential: "{{lookup('oneidentity.safeguardcollection.safeguardcredentials', spp_credential_apikey, a2aconnection=a2aconnection)}}"
+  tasks:
+    - name: Ping my hosts
+      ping:
+    - name: Call whoami
+      command: whoami
+      register: loggedinuser
+    - name: Call hostname
+      command: hostname
+      register: currenthost
+    - name: Output user and host
+      debug:
+        msg: "{{loggedinuser.stdout}} on host {{currenthost.stdout}}"
+    - name: Retrieve password
+      debug:
+        msg: "The looked up password is: {{spp_credential}}"
+    #- name: Get the SPP credential
+    #  debug: msg="{{lookup('oneidentity.safeguardcollection.safeguardcredentials', spp_credential_apikey, a2aconnection=a2aconnection)}}"
