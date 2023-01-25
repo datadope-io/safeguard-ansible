@@ -1,0 +1,79 @@
+Steps for testing the Safeguard Credential Type plugin
+
+These steps assume that AWX is running in a docker container.
+
+1. Install the Safeguard Credential Type plugin
+    a. awx-python -m pip install safeguardcredentialtype
+    or
+    a. wget https://github.com/OneIdentity/safeguard-ansible/releases/download/<latest-release>/safeguardcredentialtype-0.9.<build>-py3-none-any.whl
+    b. awx-python -m pip install <path-to-whl-file>
+    and
+    c. awx-manage setup_managed_credential_types
+    d. Restart the docker container
+        1. docker restart tools_awx_1
+2. Add the playbood
+    a. Create the folder /var/lib/awx/projects/playbooks
+    b. Copy the playbook.yaml to the new folder
+3. Add the Safeguard certificates and keys
+    a. Create the folder /var/lib/awx/spp-certs
+    b. Copy the client authentication certificate, client authentication key, and TLS certificate to the new folder
+4. Log into the AWX web interface
+5. Create an organization
+    a. Access->Organizations - Click the Add button
+    b. Name: <your-org-name>
+    c. Default Execution Environment: <select one>
+    d. Save
+6. Create an inventory
+    a. Resources->Inventories - Click the Add button
+        1. Name: <your-inventory-name>
+        2. Organization: <select-your-org>
+    b. Save
+    c. Select the Hosts tab - Click the Add button
+        1. Name: <IP-or-Host-name>
+        2. Description: <your-description>
+    d. Save
+    e. Repeat for all assets
+7. Create a project
+    a. Resources->Projects - Click the Add button
+        1. Name: <your-project-name>
+        2. Organization: <select-your-organization>
+        3. Source Control Type: Manual
+        4. Default Execution Environment: <select-one>
+        5. Playbook Directory: <select-playbooks>
+    b. Save
+8. Create the credentials
+    a. Resources->Credentials - Click the Add button
+        1. Name: SPP Credentials
+        2. Organization: <select-your-organization>
+        3. Credential Type: <Select-Safeguard Credential>
+        4. Safeguard Credential API key: <Paste-APIkey-from-SPP>
+        5. SAfeguard Appliance IP or Host name: <SPP-IP-or-Host>
+        6. Safeguard client certificate file path: /var/lib/awx/spp-certs/<your-cert>
+        7. Safeguard client key file path: /var/lib/awx/spp-certs/<your-key>
+        8. Safeguard TLS certificate file path: /var/lib/awx/spp-certs/<your-tls-cert>
+    b. Save
+    c. Click the Test Button
+    d. Resources->Credentials - Click the Add button
+        1. Name: <your-credential-name>
+        2. Organization: <select-your-organization>
+        3. Credential Type: Machine
+        4. Username: <target-asset-user-name>
+        5. Password: <select-SPP Credentials>
+    d. Save
+9. Add a template
+    a. Resources->Templates - Click the Add button
+        1. Name: <your-template-name>
+        2. Organization: <select-your-organization>
+        3. Inventory: <select-your-inventory>
+        4. Project: <select-your-projectd>
+        5. Execution Environment: <select-one>
+        6. Playbook: <select-playbook>
+    b. Save
+10. Launch the playbook
+    a. Resources->Templates
+    b. Select your new template
+    c. Click the Launch button
+    d. If the page seems stalled, refresh the browser page.
+
+
+

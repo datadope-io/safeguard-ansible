@@ -1,0 +1,14 @@
+﻿- name: SPP Test Playbook
+  hosts: all
+  tasks:
+    - name: Ping my hosts
+      ping:
+    - name: Call whoami
+      command: whoami
+      register: loggedinuser
+    - name: Call hostname
+      command: hostname
+      register: currenthost
+    - name: Output user and host
+      debug:
+        msg: "{{loggedinuser.stdout}} on host {{currenthost.stdout}}"
