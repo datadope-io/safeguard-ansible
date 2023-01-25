@@ -31,6 +31,7 @@ DOCUMENTATION = """
             - spp_appliance - IP address or host name of the Safeguard for Prvileged Passwords appliance
             - spp_certificate_file - Full path to the A2A client authentication certificate
             - spp_certificate_key - Full path to the A2A client authentication private key
+            - spp_tls_cert(optional) - Full path to the TLS publis certificate that is associated with the SPP appliance
         required: True
     notes:
       - Please see the configuration for the Safeguard for Privileged Passwords Application to Application registration.
@@ -45,6 +46,7 @@ EXAMPLES = """
       spp_appliance: 192.168.0.1
       spp_certificate_file: /etc/ansible/certs/CN=a2ausercert.pem
       spp_certificate_key: /etc/ansible/certs/CN=a2ausercert.key
+      spp_tls_cert_key: /etc/ansible/certs/spptlscert.pem
   name: retrieve a credential
     ansible.builtin.set_fact:
       password: "{{ lookup('safeguardcredentials', spp_credential_apikey, a2aconnection) }}"
