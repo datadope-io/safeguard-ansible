@@ -2,7 +2,6 @@
 # (c) 2023, One Identity LLC.
 
 from __future__ import (absolute_import, division, print_function)
-from pysafeguard import *
 from os.path import dirname
 import sys
 from ansible.plugins.lookup import LookupBase
