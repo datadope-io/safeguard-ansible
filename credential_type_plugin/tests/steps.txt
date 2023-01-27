@@ -59,15 +59,15 @@ These steps assume that AWX is running in a docker container.
         3. Credential Type: Machine
         4. Username: <target-asset-user-name>
         5. Password: <select-SPP Credentials>
-    d. Save
+    e. Save
 9. Add a template
     a. Resources->Templates - Click the Add button
         1. Name: <your-template-name>
-        2. Organization: <select-your-organization>
-        3. Inventory: <select-your-inventory>
-        4. Project: <select-your-projectd>
-        5. Execution Environment: <select-one>
-        6. Playbook: <select-playbook>
+        2. Inventory: <select-your-inventory>
+        3. Project: <select-your-projectd>
+        4. Execution Environment: <select-one>
+        5. Playbook: <select-playbook>
+        6. Credentials: <select-machine-credential-created-in-8.d>
     b. Save
 10. Launch the playbook
     a. Resources->Templates

@@ -20,6 +20,14 @@ For more information about PySafeguard, please see <https://github.com/OneIdenti
 
 Installation of the Safeguard collection must be done using the Ansible-Galaxy command line tool. There are several options for installing the Safeguard collection for Ansible.
 
+#### Installing from the Ansible Galaxy repository
+
+From the Ansible host computer, run the following command:
+
+```text
+> ansible-galaxy collection install oneidentity.safeguardcollection -p <your-collection-location>
+```
+
 #### Installing from the tarball
 
 1. Download the latest release tarball from the safeguard-ansible GitHub repository to the Ansible controller node. (<https://github.com/OneIdentity/safeguard-ansible/releases>).
