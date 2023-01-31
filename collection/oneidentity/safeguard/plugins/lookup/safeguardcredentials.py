@@ -31,6 +31,7 @@ DOCUMENTATION = """
             - spp_certificate_file - Full path to the A2A client authentication certificate
             - spp_certificate_key - Full path to the A2A client authentication private key
             - spp_tls_cert(optional) - Full path to the TLS publis certificate that is associated with the SPP appliance
+            - spp_credential_type(optional) - Credential type to retrieve. Must be 'password' or 'privatekey'
         required: True
     notes:
       - Please see the configuration for the Safeguard for Privileged Passwords Application to Application registration.
@@ -46,6 +47,7 @@ EXAMPLES = """
       spp_certificate_file: /etc/ansible/certs/CN=a2ausercert.pem
       spp_certificate_key: /etc/ansible/certs/CN=a2ausercert.key
       spp_tls_cert_key: /etc/ansible/certs/spptlscert.pem
+      spp_credential_type: password
   name: retrieve a credential
     ansible.builtin.set_fact:
       password: "{{ lookup('safeguardcredentials', spp_credential_apikey, a2aconnection) }}"
@@ -70,18 +72,19 @@ sys.path.append(dirname(__file__))
 
 from pysafeguard import *
 
-def _get_spp_credential(appliance, api_key, certificate_file, certificate_key, tls_cert):
+def _get_spp_credential(appliance, api_key, certificate_file, certificate_key, tls_cert, a2atype):
     """Retrieve the credential that corresponds to the API key
       :arg appliance: SPP appliance to connection with
       :arg api_key: Api key that coresponds to a credential
       :arg certificate_file: Client authentication certificate
       :arg certificate_key: Client authentication key
       :arg tls_cert: tls certificate or False
+      :arg a2atype: A2a credential type
       :returns: a text string containing the credential
     """
 
     try:
-        password = PySafeguardConnection.a2a_get_credential(appliance, api_key, certificate_file, certificate_key, tls_cert)
+        password = PySafeguardConnection.a2a_get_credential(appliance, api_key, certificate_file, certificate_key, tls_cert, a2aType=a2atype)
     except Exception as e:
         raise AnsibleError('Failed to retrieve the credential: %s' % to_native(e))
 
@@ -101,6 +104,13 @@ class LookupModule(LookupBase):
         cert = a2aconnection.get('spp_certificate_file', None)
         key = a2aconnection.get('spp_certificate_key', None)
         tls_cert = a2aconnection.get('spp_tls_cert', False)
+        credential_type = a2aconnection.get('spp_credential_type', A2ATypes.PASSWORD)
+        if credential_type.lower() == A2ATypes.PASSWORD:
+          credential_type = A2ATypes.PASSWORD
+        elif credential_type.lower() == A2ATypes.PRIVATEKEY:
+          credential_type = A2ATypes.PRIVATEKEY
+        else:
+          raise AnsibleError('Invalid credential type: ' + credential_type)
 
         if not appliance:
             raise AnsibleError('Missing appliance IP address or host name.')
@@ -110,7 +120,7 @@ class LookupModule(LookupBase):
             raise AnsibleError('Missing client authentication key path.')
 
         for term in terms:
-            pw = _get_spp_credential(appliance, term, cert, key, tls_cert)
+            pw = _get_spp_credential(appliance, term, cert, key, tls_cert, credential_type)
             ret.append(pw)
 
         return ret

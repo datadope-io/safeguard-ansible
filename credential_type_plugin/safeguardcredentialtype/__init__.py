@@ -11,6 +11,7 @@ def _get_spp_credential(**kwargs):
         :arg cert: Client authentication certificate
         :arg key: Client authentication key
         :arg tls_cert: tls certificate or False
+        :arg a2atype: A2a credential type
         :returns: a text string containing the credential
     """
 
@@ -19,6 +20,13 @@ def _get_spp_credential(**kwargs):
     cert = kwargs.get('spp_certificate_path', None)
     key = kwargs.get('spp_key_path', None)
     tls_cert = kwargs.get('spp_tls_path', False)
+    credential_type = kwargs.get('spp_credential_type', A2ATypes.PASSWORD)
+    if credential_type.lower() == A2ATypes.PASSWORD:
+        credential_type = A2ATypes.PASSWORD
+    elif credential_type.lower() == A2ATypes.PRIVATEKEY:
+        credential_type = A2ATypes.PRIVATEKEY
+    else:
+        raise AnsibleError('Invalid credential type: ' + credential_type)
 
     if not api_key:
         raise ValueError('Missing credential API key.')
@@ -30,7 +38,7 @@ def _get_spp_credential(**kwargs):
         raise ValueError('Missing client authentication key path.')
 
     try:
-        return PySafeguardConnection.a2a_get_credential(appliance, api_key, cert, key, tls_cert)
+        return PySafeguardConnection.a2a_get_credential(appliance, api_key, cert, key, tls_cert, a2aType=credential_type)
     except Exception as e:
         print(e)
         raise ValueError('Failed to retrieve the credential.')
@@ -59,6 +67,11 @@ spp_plugin = CredentialPlugin(
             'id': 'spp_tls_path',
             'label': 'Safeguard TLS certificate file path',
             'type': 'string',
+        }, {
+            'id': 'spp_credential_type',
+            'label': 'Safeguard credential type to retrieve',
+            'type': 'string',
+            'choices': ['password', 'privatekey']
         }],
         'metadata': [],
         'required': ['spp_api_key', 'spp_appliance', 'spp_certificate_path', 'spp_key_path'],
