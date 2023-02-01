@@ -53,6 +53,7 @@ When an A2A registration is created in SPP, there are several pieces of informat
 * A client authentication certificate file (PEM format)
 * A client authentication private key (PEM format)
 * The TLS public certificate used to verify the SPP appliance
+* The type of credential to retrieve - password (default) or privatekey
 
 Given this information from an A2A registration, the Safeguard credential lookup plugin will be able to fetch the associated credential from SPP.
 
@@ -66,6 +67,7 @@ vars:
       spp_certificate_file: /etc/ansible/spp/a2ausercert.pem
       spp_certificate_key: /etc/ansible/spp/a2ausercert.key
       spp_tls_cert: /etc/ansible/spp/spptlscert.pem
+      spp_credential_type: password
   spp_credential: "{{lookup('oneidentity.safeguardcollection.safeguardcredentials', spp_a2a_apikey, a2aconnection=a2aconnectioninfo)}}"
 ```
 
@@ -77,6 +79,7 @@ Parameters:
   * **spp_certificate_file** - The full path to the user authentication certificate (PEM format).
   * **spp_certificate_key** - The full path to the user authentication private key (PEM format). NOTE: It is the responsibility of the Ansible administrator to make sure that the private key is stored in a safe location and can only be read by Ansible.
   * **spp_tls_cert** (optional) - The full path to the TLS public certificate that is associated with the SPP appliance. If this certificate path is not provided, the lookup plugin will disable TLS validation which may produce a warning.
+  * **spp_credential_type** (optional) - The type of credential that should be retrieved from SPP. Must be **password** (default) or **privatekey**.
 
 ## Examples
 
@@ -91,7 +94,7 @@ linuxservers:
       spp_certificate_file: /etc/ansible/spp/a2ausercert.pem
       spp_certificate_key: /etc/ansible/spp/a2ausercert.key
       spp_tls_cert: /etc/ansible/spp/spptlscert.pem
-
+      spp_credential_type: password
   hosts:
     vm01:
       spp_credential_1: safyBECB8SW5g0Udk7GRFh6LaQ/KoI0eNOW4JK8Cqeo=
@@ -114,6 +117,7 @@ a2aconnectioninfo:
     spp_certificate_file: /etc/ansible/spp/a2ausercert.pem
     spp_certificate_key: /etc/ansible/spp/a2ausercert.key
     spp_tls_cert: /etc/ansible/spp/spptlscert.pem
+    spp_credential_type: password
 spp_credential: "{{lookup('oneidentity.safeguardcollection.safeguardcredentials', spp_credential_apikey, a2aconnection=a2aconnectioninfo)}}"
 ```
 
@@ -124,13 +128,25 @@ Playbook file:
   hosts: all
   vars:
     spp_credential_apikey: +IWSU/0msm98hUUUen5xOnYZZytVN2o9hLFxVr9S80Q=
-    a2aconnectioninfo:
-      spp_appliance: 192.168.1.234
-      spp_certificate_file: /etc/ansible/spp/a2ausercert.pem
-      spp_certificate_key: /etc/ansible/spp/a2ausercert.key
-      spp_tls_cert: /etc/ansible/spp/spptlscert.pem
+    my_spp_appliance: 192.168.1.234
+    my_spp_certificate_file: /etc/ansible/spp/a2ausercert.pem
+    my_spp_certificate_key: /etc/ansible/spp/a2ausercert.key
+    my_spp_tls_cert: /etc/ansible/spp/spptlscert.pem
+    a2apasswordconnectioninfo:
+      spp_appliance: "{{ my_spp_appliance }}"
+      spp_certificate_file: "{{ my_spp_certificate_file }}"
+      spp_certificate_key: "{{ my_spp_certificate_key }}"
+      spp_tls_cert: "{{ my_spp_tls_cert }}"
+      spp_credential_type: password
+    a2aprivatekeyconnectioninfo:
+      spp_appliance: "{{ my_spp_appliance }}"
+      spp_certificate_file: "{{ my_spp_certificate_file }}"
+      spp_certificate_key: "{{ my_spp_certificate_key }}"
+      spp_tls_cert: "{{ my_spp_tls_cert }}"
+      spp_credential_type: privatekey
   tasks:
-    - name: Get the SPP credential
+    - name: Get the account password
       set_fact:
-        my_credential: "{{lookup('oneidentity.safeguardcollection.safeguardcredentials', spp_credential_apikey, a2aconnection=a2aconnectioninfo)}}"
+        my_password: "{{lookup('oneidentity.safeguardcollection.safeguardcredentials', spp_credential_apikey, a2aconnection=a2apasswordconnectioninfo)}}"
+        my_privatekey: "{{lookup('oneidentity.safeguardcollection.safeguardcredentials', spp_credential_apikey, a2aconnection=a2aprivatekeyconnectioninfo)}}"
 ```

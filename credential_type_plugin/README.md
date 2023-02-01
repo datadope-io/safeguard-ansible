@@ -11,12 +11,13 @@ The Safeguard Credential Type plugin is a plugin that is installed and used by t
 * **Safeguard client certificate file path** - The full path to the user authentication certificate (PEM format).
 * **Safeguard client key file path** - The full path to the user authentication private key (PEM format). NOTE: It is the responsibility of the Ansible administrator to make sure that the private key is stored in a safe location and can only be read by Ansible.
 * **Safeguard TLS certificate file path** (optional) - The full path to the TLS public certificate that is associated with the SPP appliance. If this certificate path is not provided, the lookup plugin will disable TLS validation which may produce a warning.
+* **Safeguard credential type to retrieve** (optional) - Specify the credential type to retrieve from SPP. The options are **password** (default) or **privatekey**.
 
 To fetch a credential from SPP, an A2A registration must have been created in SPP. For more information about how to create an A2A registration, please see the Safeguard for Privileged Passwords Administration Guide for your version of SPP (<https://support.oneidentity.com/technical-documents>).
 
 ## Installation
 
-The installation of the Safeguard Credential Type plugin must be done on the server that is running the Ansible Automation Platform web interface. The plugin is available from the Pypi repository at <https://pypi.org/project/safeguardcredentialtype/> and can be install by running the following commands:
+The installation of the Safeguard Credential Type plugin must be done on the server that is running the Ansible Automation Platform web interface. The plugin is available from the PyPI repository at <https://pypi.org/project/safeguardcredentialtype/> and can be install by running the following commands:
 
 ```text
 > sudo awx-python -m pip install safeguardcredentialtype
