@@ -11,7 +11,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  version: '0.9.$(Build.BuildId)'
+  version: '1.2.$(Build.BuildId)'
   workingDir: '$(Build.SourcesDirectory)/credential_type_plugin'
   isPrerelease: ${{ true }}
   isReleaseBranch: $[ or( eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release-') ) ]
@@ -83,7 +83,7 @@ steps:
   condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
 
 - script: |
-    python3 -m twine upload --verbose --repository SafeguardAnsible --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/dist/*
+    python3 -m twine upload --verbose --config-file $(PYPIRC_PATH) $(Build.ArtifactStagingDirectory)/dist/*
   displayName: Upload release to PyPi OneIdentity
   condition: and(succeeded(), eq(variables.isReleaseBranch, true), eq(variables.isPrerelease, false))
 
