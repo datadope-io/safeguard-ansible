@@ -126,14 +126,16 @@ class LookupModule(LookupBase):
             raise AnsibleError(f"Error obtaining entitlements: {result.status_code} - {result.text}")
 
         entitlements = result.json()
-        # Filter to get the exact match. Matcheamos por nombre o por IP
-        print(entitlements)
-        asset = next((x for x in entitlements if (x['Account']['AssetName'] == asset_name or x['Account']['AssetNetworkAddress'] == asset_name)), None)
+
+        # Filter to get the exact match. Match by name or network address
+        asset = list(x for x in entitlements if (x.get('Account', {}).get('AssetName') == asset_name or x.get('Account', {}).get('AssetNetworkAddress') == asset_name))
 
         if not asset:
             raise AnsibleError(f"Asset with name '{asset_name}' not found")
-        elif len(entitlements) > 1:
+        elif len(asset) > 1:
             raise AnsibleError(f"Multiple entitlements found for '{asset_name}': {asset}")
+
+        asset = asset[0]
 
         # Create a request for a password
         account_id = asset["Account"]["Id"]
