@@ -106,10 +106,10 @@ class LookupModule(LookupBase):
 
         # Iterate over the requests and return the first one that matches the server name
         for r in request:
-            if r["AccountAssetName"] == asset_name:
+            if r["AccountAssetName"] == asset_name and not r["WasExpired"]:
                 return r["Id"]
 
-        raise AnsibleError(f"Multiple access requests found for '{asset_name}', but no one matches the server name")
+        raise AnsibleError(f"Multiple access requests found for '{asset_name}', but no one matches the server name or is not expired")
 
 
     def get_password(self, asset_name):
