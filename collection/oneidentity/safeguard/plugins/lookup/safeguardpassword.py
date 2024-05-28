@@ -127,8 +127,8 @@ class LookupModule(LookupBase):
 
         entitlements = result.json()
 
-        # Filter to get the exact match. Match by name or network address
-        asset = list(x for x in entitlements if (x.get('Account', {}).get('AssetName') == asset_name or x.get('Account', {}).get('AssetNetworkAddress') == asset_name))
+        # Filter to get the exact match. Match by name or network address. Ignore case.
+        asset = list(x for x in entitlements if x.get('Account', {}).get('AssetName').lower() == asset_name.lower() or x.get('Account', {}).get('AssetNetworkAddress').lower() == asset_name.lower())
 
         if not asset:
             raise AnsibleError(f"Asset with name '{asset_name}' not found")
