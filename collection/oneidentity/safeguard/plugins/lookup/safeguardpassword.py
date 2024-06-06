@@ -111,7 +111,11 @@ class LookupModule(LookupBase):
         # Iterate over the requests and return the first one that matches the server name, its not expired and in a state that allows password checkout
         display.vvvv("Multiple access requests found for '%s', checking for the one that matches the asset name and is not expired" % asset_name)
         for r in request:
-            if r["AccountAssetName"] == asset_name and not r["WasExpired"]:
+            if r["AccountAssetName"] == asset_name and \
+                    not r["WasExpired"] and \
+                    ( r["State"] == "RequestAvailable" or \
+                        r["State"] == "PasswordCheckedOut" ):
+
                 return r["Id"]
 
         raise AnsibleError(f"Multiple access requests found for '{asset_name}', but no one matches the server name or is not expired")
