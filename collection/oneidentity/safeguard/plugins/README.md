@@ -8,10 +8,10 @@ The Safeguard Credentials lookup plugin allows Ansible to fetch a credential fro
 
 ### Prerequisites
 
-All of the Safeguard plugins have a dependency on One Identity PySafeguard python module. PySafeguard provides a native python client library for accessing the SPP appliance. PySafeguard can be installed by running the following command:
+All of the Safeguard plugins have a dependency on One Identity PySafeguard python module. PySafeguard provides a native python client library for accessing the SPP appliance. PySafeguard can be installed by running the following command (also tenacity is needed to retry password checkout if it fails):
 
 ```text
-> python3 -m pip install pysafeguard
+> python3 -m pip install pysafeguard==7.4.0 tenacity==8.3.0
 ```
 
 For more information about PySafeguard, please see <https://github.com/OneIdentity/PySafeguard>.

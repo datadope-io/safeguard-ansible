@@ -67,6 +67,7 @@ from os.path import dirname
 sys.path.append(dirname(__file__))
 
 from pysafeguard import PySafeguardConnection, HttpMethods, Services
+from tenacity import retry, retry_if_exception_type, stop_after_attempt
 
 
 class LookupModule(LookupBase):
@@ -121,6 +122,7 @@ class LookupModule(LookupBase):
         raise AnsibleError(f"Multiple access requests found for '{asset_name}', but no one matches the server name or is not expired")
 
 
+    @retry(retry=retry_if_exception_type(AnsibleError), stop=stop_after_attempt(2))
     def get_password(self, asset_name):
         # Use query to get the entitlements matching server
         result = self.connection.invoke(HttpMethods.GET, Services.CORE, "Me/RequestEntitlements",
