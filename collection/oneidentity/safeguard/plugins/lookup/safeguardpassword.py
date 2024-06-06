@@ -58,6 +58,9 @@ _raw:
 """
 
 from ansible.plugins.lookup import LookupBase
+from ansible.utils.display import Display
+
+display = Display()
 
 import sys
 from os.path import dirname
@@ -79,6 +82,7 @@ class LookupModule(LookupBase):
 
 
         try:
+            display.vvvv("Connecting to Safeguard '%s' as '%s' to request password for asset '%s'" % (appliance, username, terms[0]))
             self.connection = PySafeguardConnection(appliance, verify=False)
             self.connection.connect_password(username, password)
         except Exception as e:
@@ -104,7 +108,8 @@ class LookupModule(LookupBase):
         elif len(request) == 1:
             return request[0]["Id"]
 
-        # Iterate over the requests and return the first one that matches the server name
+        # Iterate over the requests and return the first one that matches the server name, its not expired and in a state that allows password checkout
+        display.vvvv("Multiple access requests found for '%s', checking for the one that matches the asset name and is not expired" % asset_name)
         for r in request:
             if r["AccountAssetName"] == asset_name and not r["WasExpired"]:
                 return r["Id"]
@@ -145,11 +150,12 @@ class LookupModule(LookupBase):
                                         "AccountId": account_id,
                                         "AssetId": asset_id,
                                         "AccessRequestType": "Password",
-                                        "ReasonComment": "Ansible lookup plugin",
+                                        "ReasonComment": f"Ansible lookup plugin request for asset '{asset_name}'",
                                         })
 
         # if error 400, the password is already requested, get the request id
         if result.status_code == 400 and "You already have a request for the account" in result.text:
+            display.vvvv(f"Access request already exists for '{asset_name}'")
             request_id = self.existing_request(asset_name)
         elif result.status_code != 201:
             raise AnsibleError(f"Error creating access request: {result.status_code} - {result.text}")
@@ -160,6 +166,6 @@ class LookupModule(LookupBase):
         result = self.connection.invoke(HttpMethods.POST, Services.CORE, f"AccessRequests/{request_id}/CheckOutPassword")
 
         if result.status_code != 200:
-            raise AnsibleError(f"Error obtaining password: {result.status_code} - {result.text}")
+            raise AnsibleError(f"Error checking out password: {result.status_code} - {result.text}")
 
         return result.json()
