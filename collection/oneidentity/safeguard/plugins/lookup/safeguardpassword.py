@@ -24,7 +24,7 @@ DOCUMENTATION = """
     options:
       _terms:
         description:
-          - Asset name to get the password for
+          - Asset name or IP to get the password for
         type: str
         required: True
       appliance:
@@ -122,8 +122,11 @@ class LookupModule(LookupBase):
         )
         for r in request:
             if (
-                r["AccountAssetName"] == asset_name
-                and not r["WasExpired"]
+                not r["WasExpired"]
+                and (  # Query "q" parameter could match by several fields. Match if the asset name or network address is the asset_name passed to the lookup
+                    r["AccountAssetName"] == asset_name
+                    or r["AssetNetworkAddress"] == asset_name
+                )
                 and (
                     r["State"] == "RequestAvailable"
                     or r["State"] == "PasswordCheckedOut"
@@ -131,8 +134,9 @@ class LookupModule(LookupBase):
             ):
                 return r["Id"]
 
-        raise AnsibleError(f"Multiple access requests found for '{
-                           asset_name}', but no one matches the server name or is not expired")
+        raise AnsibleError(
+            f"Multiple access requests found for '{asset_name}', but no one matches the server (name or ip) or is not expired"
+        )
 
     @retry(
         retry=retry_if_exception_type(AnsibleError),
