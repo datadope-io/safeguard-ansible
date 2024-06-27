@@ -104,14 +104,16 @@ class LookupModule(LookupBase):
             HttpMethods.GET, Services.CORE, "AccessRequests", query={"q": asset_name}
         )
         if result.status_code != 200:
-            raise AnsibleError(f"Error obtaining access requests: {
-                               result.status_code} - {result.text}")
+            raise AnsibleError(
+                f"Error obtaining access requests: {result.status_code} - {result.text}"
+            )
 
         request = result.json()
         # If lenght is 0, there is no request, raise exception
         if len(request) == 0:
-            raise AnsibleError(f"Access request not found for '{
-                               asset_name}', but it should exist")
+            raise AnsibleError(
+                f"Access request not found for '{asset_name}', but it should exist"
+            )
         elif len(request) == 1:
             return request[0]["Id"]
 
@@ -157,8 +159,9 @@ class LookupModule(LookupBase):
         )
 
         if result.status_code != 200:
-            raise AnsibleError(f"Error obtaining entitlements: {
-                               result.status_code} - {result.text}")
+            raise AnsibleError(
+                f"Error obtaining entitlements: {result.status_code} - {result.text}"
+            )
 
         entitlements = result.json()
 
@@ -174,8 +177,9 @@ class LookupModule(LookupBase):
         if not asset:
             raise AssetNotFoundError(f"Asset with name '{asset_name}' not found")
         elif len(asset) > 1:
-            raise AnsibleError(f"Multiple entitlements found for '{
-                               asset_name}': {asset}")
+            raise AnsibleError(
+                f"Multiple entitlements found for '{asset_name}': {asset}"
+            )
 
         asset = asset[0]
 
@@ -202,8 +206,9 @@ class LookupModule(LookupBase):
             display.vvvv(f"Access request already exists for '{asset_name}'")
             request_id = self.existing_request(asset_name)
         elif result.status_code != 201:
-            raise AnsibleError(f"Error creating access request: {
-                               result.status_code} - {result.text}")
+            raise AnsibleError(
+                f"Error creating access request: {result.status_code} - {result.text}"
+            )
         else:
             request_id = result.json()["Id"]
 
@@ -215,7 +220,8 @@ class LookupModule(LookupBase):
         )
 
         if result.status_code != 200:
-            raise AnsibleError(f"Error checking out password: {
-                               result.status_code} - {result.text}")
+            raise AnsibleError(
+                f"Error checking out password: {result.status_code} - {result.text}"
+            )
 
         return result.json()
