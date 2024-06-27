@@ -67,6 +67,11 @@ display = Display()
 sys.path.append(dirname(__file__))
 
 
+# Define a custom error if asset is not found
+class AssetNotFoundError(Exception):
+    pass
+
+
 class LookupModule(LookupBase):
     def run(self, terms, variables=None, **kwargs):
         ret = []
@@ -163,7 +168,7 @@ class LookupModule(LookupBase):
         )
 
         if not asset:
-            raise AnsibleError(f"Asset with name '{asset_name}' not found")
+            raise AssetNotFoundError(f"Asset with name '{asset_name}' not found")
         elif len(asset) > 1:
             raise AnsibleError(f"Multiple entitlements found for '{
                                asset_name}': {asset}")
