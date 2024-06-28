@@ -126,7 +126,7 @@ class LookupModule(LookupBase):
             if (
                 not r["WasExpired"]
                 and (  # Query "q" parameter could match by several fields. Match if the asset name or network address is the asset_name passed to the lookup
-                    r["AccountAssetName"] == asset_name
+                    r["AccountAssetName"].lower() == asset_name.lower()
                     or r["AssetNetworkAddress"] == asset_name
                 )
                 and (
