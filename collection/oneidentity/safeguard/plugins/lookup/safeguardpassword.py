@@ -2,7 +2,12 @@
 # (c) 2024, Datadope
 
 from __future__ import absolute_import, division, print_function
-from tenacity import retry, retry_if_exception_type, stop_after_attempt
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_random_exponential,
+)
 from pysafeguard import PySafeguardConnection, HttpMethods, Services
 from ansible.utils.display import Display
 from os.path import dirname
@@ -119,9 +124,10 @@ class LookupModule(LookupBase):
 
         # Iterate over the requests and return the first one that matches the server name, its not expired and in a state that allows password checkout
         display.vvvv(
-            "Multiple access requests found for '%s', checking for the one that matches the asset name and is not expired"
+            "Multiple access requests found for '%s', checking for the one that matches the asset name/ip, is not expired and is available"
             % asset_name
         )
+
         for r in request:
             if (
                 not r["WasExpired"]
@@ -137,12 +143,13 @@ class LookupModule(LookupBase):
                 return r["Id"]
 
         raise AnsibleError(
-            f"Multiple access requests found for '{asset_name}', but no one matches the server (name or ip) or is not expired"
+            f"Multiple access requests found for '{asset_name}', but no one matches the server (name or ip), not expired and available"
         )
 
     @retry(
         retry=retry_if_exception_type(AnsibleError),
-        stop=stop_after_attempt(2),
+        stop=stop_after_attempt(4),
+        wait=wait_random_exponential(multiplier=1, min=3, max=30),
         reraise=True,
     )
     def get_password(self, asset_name):
