@@ -177,8 +177,7 @@ class LookupModule(LookupBase):
             x
             for x in entitlements
             if x.get("Account", {}).get("AssetName").lower() == asset_name.lower()
-            or x.get("Account", {}).get("AssetNetworkAddress").lower()
-            == asset_name.lower()
+            or x.get("Account", {}).get("AssetNetworkAddress") == asset_name
         )
 
         if not asset:
