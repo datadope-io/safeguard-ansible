@@ -207,7 +207,7 @@ class LookupModule(LookupBase):
         # if error 400, the password is already requested, get the request id
         if (
             result.status_code == 400
-            and "You already have a request for the account" in result.text
+            and ("You already have a request for the account" in result.text or "Ya tiene una solicitud para la cuenta" in result.text)
         ):
             display.vvvv(f"Access request already exists for '{asset_name}'")
             request_id = self.existing_request(asset_name)
